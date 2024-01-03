@@ -16,10 +16,11 @@ void generate_set_value(int x, int *place) {
         0x00008067  // ret
     };
     instr[1] |= (x & 0xfff) << 20;
+    memcpy(place, instr, sizeof(instr));
+    asm volatile("fence.i");
 #else
     #error "Unsupported ISA"
 #endif
-    memcpy(place, instr, sizeof(instr));
 }
 
 int main(int argc, char *argv[]) {
@@ -37,7 +38,6 @@ int main(int argc, char *argv[]) {
         test = 0;
         if(use_w_xor_x) mprotect(addr, PAGESIZE, PROT_READ | PROT_WRITE);
         generate_set_value(i % 2048, (int*)addr);
-        asm volatile("fence.i");
         if(use_w_xor_x) mprotect(addr, PAGESIZE, PROT_READ | PROT_EXEC);
         ((void(*)(int *x, int y))addr)(&test, 0);
     }
