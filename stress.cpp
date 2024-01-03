@@ -17,7 +17,17 @@ void generate_set_value(int x, int *place) {
     };
     instr[1] |= (x & 0xfff) << 20;
     memcpy(place, instr, sizeof(instr));
-    asm volatile("fence.i");
+    __builtin___clear_cache(place, place + sizeof(instr));
+#elif __aarch64__
+    uint32_t instr[4] = {
+        0xf9400001, // ldr x1,[x0]
+        0x91000021, // add x1,x1,#0
+        0xf9000001, // str x1,[x0]
+        0xd65f03c0  // ret
+    };
+    instr[1] |= (x & 0xfff) << 10;
+    memcpy(place, instr, sizeof(instr));
+    __builtin___clear_cache(place, place + sizeof(instr));
 #else
     #error "Unsupported ISA"
 #endif
