@@ -40,6 +40,10 @@ int main(int argc, char *argv[]) {
         generate_set_value(i % 2048, (int*)addr);
         if(use_w_xor_x) mprotect(addr, PAGESIZE, PROT_READ | PROT_EXEC);
         ((void(*)(int *x, int y))addr)(&test, 0);
+        if (test != i % 2048) {
+            printf("test failed: %d %d\n", test, i % 2048);
+            exit(1);
+        }
     }
     return 0;
 }
