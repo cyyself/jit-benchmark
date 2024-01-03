@@ -8,7 +8,7 @@
 #define PAGESIZE 16384
 
 void generate_set_value(int x, int *place) {
-#ifdef __riscv
+#if defined(__riscv) and __riscv_xlen == 64
     uint32_t instr[4] = {
         0x00053583, // ld a1,0(a0)
         0x00058593, // addi a1,a1,0
