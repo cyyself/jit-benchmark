@@ -17,7 +17,7 @@ void generate_set_value(int x, int *place) {
     };
     instr[1] |= (x & 0xfff) << 20;
     memcpy(place, instr, sizeof(instr));
-    __builtin___clear_cache(place, place + sizeof(instr));
+    __clear_cache(place, place + sizeof(instr));
 #elif __aarch64__
     uint32_t instr[4] = {
         0xf9400001, // ldr x1,[x0]
@@ -27,7 +27,7 @@ void generate_set_value(int x, int *place) {
     };
     instr[1] |= (x & 0xfff) << 10;
     memcpy(place, instr, sizeof(instr));
-    __builtin___clear_cache(place, place + sizeof(instr));
+    __clear_cache(place, place + sizeof(instr));
 #else
     #error "Unsupported ISA"
 #endif
